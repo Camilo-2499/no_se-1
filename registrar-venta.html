@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LentSoft — Registrar Venta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #7c3aed;
+    --purple-dark: #6d28d9;
+    --purple-light: #f5f3ff;
+    --purple-mid: #ede9fe;
+    --green: #10b981;
+    --green-light: #ecfdf5;
+    --red: #ef4444;
+    --red-light: #fef2f2;
+    --yellow: #f59e0b;
+    --yellow-light: #fffbeb;
+    --blue: #3b82f6;
+    --blue-light: #eff6ff;
+    --text: #1a1a2e;
+    --text-soft: #6b7280;
+    --text-xsoft: #9ca3af;
+    --border: #e5e7eb;
+    --bg: #f5f4fb;
+    --white: #ffffff;
+    --shadow: 0 1px 10px rgba(124,58,237,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-logo { font-size: 20px; font-weight: 700; color: var(--purple); }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a { font-size: 14px; color: var(--text-soft); text-decoration: none; font-weight: 500; }
+  .nav-links a:hover { color: var(--purple); }
+  .nav-right { display: flex; align-items: center; gap: 1rem; }
+  .nav-right a { font-size: 14px; color: var(--text-soft); text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+  .nav-right a:hover { color: var(--purple); }
+
+  /* LAYOUT */
+  .page { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; }
+  .page-title { font-size: 22px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px; }
+  .orden-badge { background: var(--purple-light); color: var(--purple); font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+
+  /* BREADCRUMB */
+  .breadcrumb { font-size: 13px; color: var(--text-soft); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 6px; }
+  .breadcrumb a { color: var(--purple); text-decoration: none; }
+  .breadcrumb span { color: var(--text-xsoft); }
+
+  /* CARD */
+  .card { background: var(--white); border-radius: 16px; padding: 1.5rem; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .card-title { font-size: 12px; font-weight: 600; color: var(--purple); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 1rem; display: flex; align-items: center; gap: 7px; }
+  .card-title svg { width: 14px; height: 14px; }
+
+  /* FIELDS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--text-soft); }
+  .field input, .field select, .field textarea {
+    border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 9px 13px; font-size: 13px; color: var(--text);
+    background: #fafafa; font-family: inherit; width: 100%;
+    outline: none; transition: border-color .2s, background .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--purple); background: var(--white); }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .err { font-size: 11px; color: var(--red); display: none; margin-top: 2px; }
+
+  /* PRODUCT TABLE */
+  .prod-head { display: grid; grid-template-columns: 2.5fr 80px 130px 110px 40px; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid #f0eeff; margin-bottom: 10px; }
+  .prod-head span { font-size: 11px; font-weight: 600; color: var(--text-xsoft); text-transform: uppercase; letter-spacing: .04em; }
+  .prod-row { display: grid; grid-template-columns: 2.5fr 80px 130px 110px 40px; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .prod-row input { border: 1.5px solid var(--border); border-radius: 9px; padding: 8px 11px; font-size: 13px; color: var(--text); background: #fafafa; font-family: inherit; width: 100%; outline: none; transition: border-color .2s; }
+  .prod-row input:focus { border-color: var(--purple); background: var(--white); }
+  .prod-sub { font-size: 13px; font-weight: 600; color: var(--text); text-align: right; }
+  .btn-del { background: transparent; border: 1.5px solid #fecaca; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: var(--red); display: flex; align-items: center; justify-content: center; transition: background .15s; }
+  .btn-del:hover { background: var(--red-light); }
+  .btn-del svg { width: 14px; height: 14px; }
+  .btn-add { background: transparent; border: 1.5px dashed #c4b5fd; border-radius: 9px; padding: 8px 18px; font-size: 13px; font-weight: 500; color: var(--purple); cursor: pointer; font-family: inherit; margin-top: 6px; transition: background .15s; }
+  .btn-add:hover { background: var(--purple-light); }
+  .err-prod { font-size: 12px; color: var(--red); margin-top: 6px; display: none; }
+
+  /* TOTALES */
+  .total-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #f5f4fb; }
+  .total-row .lbl { font-size: 13px; color: var(--text-soft); }
+  .total-row .val { font-size: 13px; color: var(--text); font-weight: 500; }
+  .total-final { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 0; }
+  .total-final .lbl { font-size: 15px; font-weight: 700; color: var(--text); }
+  .total-final .val { font-size: 18px; font-weight: 700; color: var(--purple); }
+  .desc-row { display: flex; align-items: center; gap: 8px; }
+  .desc-input { width: 58px !important; text-align: center; padding: 5px 8px !important; }
+
+  /* METODO PAGO */
+  .metodos { display: flex; gap: 10px; flex-wrap: wrap; }
+  .metodo-card { border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; flex: 1; min-width: 120px; background: #fafafa; transition: all .15s; }
+  .metodo-card:hover { border-color: #c4b5fd; background: var(--purple-light); }
+  .metodo-card.active { border-color: var(--purple); background: var(--purple-light); }
+  .metodo-card svg { width: 22px; height: 22px; color: var(--text-xsoft); flex-shrink: 0; }
+  .metodo-card.active svg { color: var(--purple); }
+  .metodo-card .mt { font-size: 13px; font-weight: 600; color: var(--text); }
+  .metodo-card .ms { font-size: 11px; color: var(--text-xsoft); }
+
+  /* ESTADO */
+  .estados { display: flex; gap: 8px; flex-wrap: wrap; }
+  .estado-btn { border: 1.5px solid var(--border); border-radius: 20px; padding: 7px 18px; font-size: 13px; font-weight: 500; cursor: pointer; background: #fafafa; color: var(--text-soft); font-family: inherit; transition: all .15s; }
+  .estado-btn.s-pend { border-color: var(--yellow); background: var(--yellow-light); color: #92400e; }
+  .estado-btn.s-proc { border-color: var(--blue); background: var(--blue-light); color: #1e40af; }
+  .estado-btn.s-comp { border-color: var(--green); background: var(--green-light); color: #065f46; }
+
+  /* BUTTONS */
+  .btn-primary { background: var(--purple); color: var(--white); border: none; border-radius: 10px; padding: 11px 28px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 7px; transition: background .15s; }
+  .btn-primary:hover { background: var(--purple-dark); }
+  .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+  .btn-secondary { background: transparent; border: 1.5px solid var(--border); color: var(--text-soft); border-radius: 10px; padding: 11px 22px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: background .15s; }
+  .btn-secondary:hover { background: var(--bg); }
+  .btn-row { display: flex; gap: 10px; margin-top: 6px; }
+  .btn-row .btn-primary { flex: 1; justify-content: center; }
+  .btn-row .btn-secondary { flex: 1; justify-content: center; }
+
+  /* TOAST */
+  #toast { position: fixed; bottom: 28px; right: 28px; z-index: 999; border-radius: 12px; padding: 13px 20px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 24px rgba(0,0,0,.12); display: none; animation: slideUp .3s ease; }
+  @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">LentSoft</span>
+  <div class="nav-links">
+    <a href="#">Inicio</a>
+    <a href="#">Tienda</a>
+    <a href="#">Nosotros</a>
+  </div>
+  <div class="nav-right">
+    <a href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Salir
+    </a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb">
+    <a href="historial-ventas.html">Ventas</a>
+    <span>›</span>
+    <span>Registrar nueva venta</span>
+  </div>
+
+  <div class="page-header">
+    <div class="page-title">
+      Registrar nueva venta
+      <span class="orden-badge" id="orden-id">ORD-005</span>
+    </div>
+    <button class="btn-primary" onclick="guardarVenta()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      Guardar venta
+    </button>
+  </div>
+
+  <!-- Cliente -->
+  <div class="card">
+    <p class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Datos del cliente
+    </p>
+    <div class="grid-2" style="margin-bottom:12px;">
+      <div class="field">
+        <label>Nombre / Razón social *</label>
+        <input type="text" id="f-cliente" placeholder="Ej. María García" />
+        <span class="err" id="e-cliente">Campo requerido</span>
+      </div>
+      <div class="field">
+        <label>NIT / Cédula</label>
+        <input type="text" id="f-doc" placeholder="Ej. 900123456-1" />
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="field">
+        <label>Teléfono</label>
+        <input type="text" id="f-tel" placeholder="Ej. 310 000 0000" />
+      </div>
+      <div class="field">
+        <label>Fecha de venta *</label>
+        <input type="date" id="f-fecha" />
+        <span class="err" id="e-fecha">Campo requerido</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Productos -->
+  <div class="card">
+    <p class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Productos / servicios
+    </p>
+    <div class="prod-head">
+      <span>Producto</span><span>Cant.</span><span>Precio unit.</span><span style="text-align:right">Subtotal</span><span></span>
+    </div>
+    <div id="prod-list"></div>
+    <div class="err-prod" id="e-prod"></div>
+    <button class="btn-add" onclick="addProd()">+ Agregar producto</button>
+  </div>
+
+  <!-- Resumen -->
+  <div class="card">
+    <p class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Resumen de totales
+    </p>
+    <div class="total-row"><span class="lbl">Subtotal</span><span class="val" id="r-sub">$ 0</span></div>
+    <div class="total-row">
+      <span class="lbl">Descuento</span>
+      <div class="desc-row">
+        <input class="desc-input" type="number" id="f-desc" min="0" max="100" value="0" oninput="calcTotales()" />
+        <span style="font-size:12px;color:var(--text-xsoft);">%</span>
+        <span class="val" id="r-desc" style="color:var(--green);">- $ 0</span>
+      </div>
+    </div>
+    <div class="total-row"><span class="lbl">IVA (19%)</span><span class="val" id="r-iva">$ 0</span></div>
+    <div class="total-final"><span class="lbl">Total a pagar</span><span class="val" id="r-total">$ 0</span></div>
+  </div>
+
+  <!-- Método de pago -->
+  <div class="card">
+    <p class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Método de pago
+    </p>
+    <div class="metodos" id="metodos">
+      <div class="metodo-card active" onclick="selMetodo(this,'efectivo')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0-6 0"/></svg>
+        <div><p class="mt">Efectivo</p><p class="ms">Pago en caja</p></div>
+      </div>
+      <div class="metodo-card" onclick="selMetodo(this,'tarjeta')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <div><p class="mt">Tarjeta</p><p class="ms">Déb. / Créd.</p></div>
+      </div>
+      <div class="metodo-card" onclick="selMetodo(this,'transferencia')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        <div><p class="mt">Transferencia</p><p class="ms">PSE / banco</p></div>
+      </div>
+    </div>
+    <input type="hidden" id="f-metodo" value="efectivo" />
+  </div>
+
+  <!-- Estado -->
+  <div class="card">
+    <p class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Estado inicial de la venta
+    </p>
+    <div class="estados" id="estados">
+      <button class="estado-btn s-pend" onclick="selEstado(this,'pendiente')">Pendiente</button>
+      <button class="estado-btn" onclick="selEstado(this,'en proceso')">En proceso</button>
+      <button class="estado-btn" onclick="selEstado(this,'completado')">Completado</button>
+    </div>
+    <input type="hidden" id="f-estado" value="pendiente" />
+  </div>
+
+  <!-- Observaciones -->
+  <div class="card">
+    <p class="card-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Observaciones
+    </p>
+    <div class="field">
+      <textarea id="f-obs" placeholder="Notas adicionales sobre la venta..."></textarea>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="window.location.href='historial-ventas.html'">Cancelar</button>
+    <button class="btn-primary" onclick="guardarVenta()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      Registrar venta
+    </button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let pc = 0;
+function fmt(n){ return '$ ' + Math.round(n).toLocaleString('es-CO'); }
+
+function addProd(){
+  const id = pc++;
+  const row = document.createElement('div');
+  row.className = 'prod-row'; row.id = 'pr-' + id;
+  row.innerHTML = `
+    <input type="text" placeholder="Ej. Gafas Ray-Ban Aviador" oninput="calcTotales()" />
+    <input type="number" min="1" value="1" oninput="calcTotales()" />
+    <input type="number" min="0" placeholder="0" oninput="calcTotales()" />
+    <span class="prod-sub" id="ps-${id}">$ 0</span>
+    <button class="btn-del" onclick="delProd(${id})" title="Eliminar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+  document.getElementById('prod-list').appendChild(row);
+  calcTotales();
+}
+
+function delProd(id){
+  const el = document.getElementById('pr-' + id);
+  if(el) el.remove();
+  calcTotales();
+}
+
+function calcTotales(){
+  let sub = 0;
+  document.querySelectorAll('.prod-row').forEach(row => {
+    const ins = row.querySelectorAll('input');
+    const q = parseFloat(ins[1].value) || 0;
+    const p = parseFloat(ins[2].value) || 0;
+    const s = q * p; sub += s;
+    const sid = row.id.replace('pr-','');
+    const ps = document.getElementById('ps-' + sid);
+    if(ps) ps.textContent = fmt(s);
+  });
+  const desc = Math.min(100, Math.max(0, parseFloat(document.getElementById('f-desc').value) || 0));
+  const descVal = sub * (desc / 100);
+  const base = sub - descVal;
+  const iva = base * 0.19;
+  const total = base + iva;
+  document.getElementById('r-sub').textContent = fmt(sub);
+  document.getElementById('r-desc').textContent = '- ' + fmt(descVal);
+  document.getElementById('r-iva').textContent = fmt(iva);
+  document.getElementById('r-total').textContent = fmt(total);
+}
+
+function selMetodo(el, val){
+  document.querySelectorAll('.metodo-card').forEach(c => { c.classList.remove('active'); c.querySelector('svg').style.color = ''; });
+  el.classList.add('active');
+  document.getElementById('f-metodo').value = val;
+}
+
+function selEstado(el, val){
+  document.querySelectorAll('.estado-btn').forEach(b => b.className = 'estado-btn');
+  const map = { pendiente:'s-pend', 'en proceso':'s-proc', completado:'s-comp' };
+  el.classList.add(map[val] || 's-pend');
+  document.getElementById('f-estado').value = val;
+}
+
+function mostrarToast(msg, tipo){
+  const t = document.getElementById('toast');
+  t.style.display = 'flex';
+  t.style.background = tipo === 'success' ? '#ecfdf5' : '#fef2f2';
+  t.style.border = '1.5px solid ' + (tipo === 'success' ? '#10b981' : '#ef4444');
+  t.style.color = tipo === 'success' ? '#065f46' : '#991b1b';
+  t.innerHTML = `<span style="font-size:18px;font-weight:700;">${tipo==='success'?'✓':'✕'}</span><span>${msg}</span>`;
+  setTimeout(() => { t.style.display = 'none'; }, 4000);
+}
+
+async function guardarVenta(){
+  let ok = true;
+  const cl = document.getElementById('f-cliente').value.trim();
+  const fe = document.getElementById('f-fecha').value;
+  document.getElementById('e-cliente').style.display = cl ? 'none' : 'block';
+  document.getElementById('e-fecha').style.display = fe ? 'none' : 'block';
+  if(!cl || !fe) ok = false;
+  const rows = document.querySelectorAll('.prod-row');
+  const ep = document.getElementById('e-prod');
+  if(rows.length === 0){ ep.textContent = 'Agrega al menos un producto.'; ep.style.display = 'block'; ok = false; }
+  else {
+    let pok = true;
+    rows.forEach(r => { const ins = r.querySelectorAll('input'); if(!ins[0].value.trim() || !ins[2].value) pok = false; });
+    if(!pok){ ep.textContent = 'Completa nombre y precio de todos los productos.'; ep.style.display = 'block'; ok = false; }
+    else ep.style.display = 'none';
+  }
+  if(!ok) return;
+
+  const productos = Array.from(rows).map(r => {
+    const ins = r.querySelectorAll('input');
+    return { nombre: ins[0].value.trim(), cantidad: parseInt(ins[1].value)||1, precio: parseFloat(ins[2].value)||0 };
+  });
+  const descPct = parseFloat(document.getElementById('f-desc').value) || 0;
+  const subtotal = productos.reduce((a, p) => a + p.cantidad * p.precio, 0);
+  const descuento = subtotal * (descPct / 100);
+  const iva = (subtotal - descuento) * 0.19;
+  const total = (subtotal - descuento) + iva;
+
+  const payload = {
+    cliente: { nombre: cl, documento: document.getElementById('f-doc').value.trim(), telefono: document.getElementById('f-tel').value.trim() },
+    fecha: fe, productos,
+    subtotal: Math.round(subtotal), descuento_pct: descPct, descuento: Math.round(descuento),
+    iva: Math.round(iva), total: Math.round(total),
+    metodo_pago: document.getElementById('f-metodo').value,
+    estado: document.getElementById('f-estado').value,
+    observaciones: document.getElementById('f-obs').value.trim()
+  };
+
+  const btn = document.querySelector('.page-header .btn-primary');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  try {
+    const res = await fetch('/api/ventas', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    if(!res.ok){ const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Error ' + res.status); }
+    mostrarToast('Venta registrada exitosamente', 'success');
+    setTimeout(() => window.location.href = 'historial-ventas.html', 1500);
+  } catch(e){
+    mostrarToast(e.message || 'Error al guardar la venta', 'error');
+    btn.disabled = false; btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Guardar venta`;
+  }
+}
+
+addProd();
+document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
